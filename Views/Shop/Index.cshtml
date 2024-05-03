@@ -1,0 +1,29 @@
+﻿@model List<WineStore.WebSite.Models.Shop>
+
+<h2>Shops</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone No</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var shop in Model)
+        {
+            <tr>
+                <td>@shop.Id</td>
+                <td>@shop.Name</td>
+                <td>@shop.Address</td>
+                <td>@shop.PhoneNo</td>
+                <td>@shop.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
