@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using WineStore.WebSite.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace WineStore.WebSite.Controllers
 {
@@ -42,29 +45,69 @@ namespace WineStore.WebSite.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     // Read response content which should contain the access token
-                    string token = await response.Content.ReadAsStringAsync();
+                    string responseObject = await response.Content.ReadAsStringAsync();
 
 
                     // Provided token string
-                    string tokenString = "{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoicG9vaml0aGEiLCJqdGkiOiJmOTAwOTc0Yi0xZjcwLTQxOTMtODNmNi1kM2FkYTliZTQ3YWMiLCJleHAiOjE3MTQ0MzkyNjUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NjE5NTUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAifQ.-XyR7OecuWnrSsOAn88-T5UQEvxT1UXWQTGa6yEIBK8\",\"expiration\":\"2024-04-30T01:07:45Z\"}";
 
                     // Deserialize the token response
-                    TokenResponse tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(tokenString);
+                    TokenResponse tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseObject);
+
+                    //TODO: Poojitha 
+                    string role;
+                    if (tokenResponse.Roles != null && tokenResponse.Roles.Any())
+                    {
+                        role = tokenResponse.Roles.FirstOrDefault();
+                    }
+                    else
+                    {
+                        role = "admin"; // Set default role to "admin"
+                    }
+
 
                     // Extract the token and prepend it with "Bearer "
                     string bearerToken = tokenResponse.Token;
-
+                    //string role = tokenResponse.Roles.FirstOrDefault();
 
                     // Store the token securely (e.g., in session or cookie)
 
                     // Inside the Login action of LoginController after successful login
                     HttpContext.Session.SetString("AuthToken", bearerToken);
+                    HttpContext.Session.SetString("AuthRole", role);
 
-                    
+                    HttpContext.Session.SetString("UserName", model.Username);
 
+
+                    switch (role.ToUpper())
+                    {
+
+
+
+                        case "ADMIN":
+
+                            Console.WriteLine("It is ADMIN");
+                            return RedirectToAction("Index", "Admin");
+                            break;
+
+                        case "SALESREP":
+                            Console.WriteLine("It is SALESREP");
+                            return RedirectToAction("Index", "Shop");
+                            break;
+                        case "PURCHASEMANAGER":
+                            Console.WriteLine("It is PURCHASEMANAGER");
+                            return RedirectToAction("Index", "Shop");
+                            break;
+
+                        default:
+                            Console.WriteLine("Authentication failed");
+                            // Authentication failed, return back to login page with error message
+                            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                            return View("Index", model);
+                            break;
+                    }
 
                     // Redirect to home page or another secure area after successful login
-                    return RedirectToAction("Index", "Shop");
+                   
                 }
                 else
                 {
@@ -79,6 +122,19 @@ namespace WineStore.WebSite.Controllers
                 ModelState.AddModelError(string.Empty, "An error occurred while processing your request.");
                 return View("Index", model);
             }
+        }
+
+
+        // GET: /Login/Logout
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            // Clear the authentication token
+            HttpContext.Session.Remove("AuthToken");
+            HttpContext.Session.Remove("AuthRole");
+
+            // Redirect to the login page or any other page
+            return RedirectToAction("Index", "Home");
         }
     }
 }
