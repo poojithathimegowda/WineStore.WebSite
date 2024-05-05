@@ -11,20 +11,20 @@ using WineStore.WebSite.Models.Admin;
 
 namespace WineStore.WebSite.Controllers
 {
-  
-    public class ShopController : Controller
+
+    public class SalesRepController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ShopController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public SalesRepController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
             _httpContextAccessor = httpContextAccessor;
         }
 
 
-       
+
 
 
         public async Task<IActionResult> Index()

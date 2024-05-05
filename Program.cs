@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -37,6 +38,9 @@ builder.Services.AddHttpContextAccessor();
 
 
 builder.Services.AddSession();
+
+
+
 
 var app = builder.Build();
 
