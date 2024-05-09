@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using WineStore.WebSite.Managers;
 using WineStore.WebSite.Models.Admin;
+using WineStore.WebSite.Models.PurchaseManager;
 
 namespace WineStore.WebSite.Controllers
 {
-    public class ShopController : Controller
+    public class ProductController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ShopController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public ProductController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
             _httpContextAccessor = httpContextAccessor;
@@ -27,8 +28,8 @@ namespace WineStore.WebSite.Controllers
             {
                 ApiManager apiManager = new ApiManager(_httpClient);
                 var input1 = new { };
-                var output1 = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input1, System.Web.Mvc.HttpVerbs.Get);
-                return View("ListOfShops", output1);
+                var output1 = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input1, System.Web.Mvc.HttpVerbs.Get);
+                return View("ListOfProducts", output1);
             }
             catch
             {
@@ -46,32 +47,34 @@ namespace WineStore.WebSite.Controllers
         // GET: ShopController/Create
         public ActionResult Create()
         {
-            return View("AddShop");
+            return View("AddProduct");
         }
 
         // POST: ShopController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateNewShop(IFormCollection collection)
+        public async Task<ActionResult> AddProduct(IFormCollection collection)
         {
             try
             {
-                //var id = collection["Shop_ID"];
-                var name = collection["Shop_Name"];
-                var address = collection["Location"];
-
+                var id = collection["Product_ID"];
+                var name = collection["Product_Name"];
+                var description = collection["Description"];
+                var price = collection["Price"];
+                var supplier = collection["Supplier_ID"];
                 // Create a CustomersViewModel object
-                var shopViewModel = new ShopViewModel
+                var productViewModel = new ProductViewModel
                 {
-                    //Shop_ID = Convert.ToInt32(id) , 
-                    Shop_Name = name,
-                    Location = address
-                    
+                    Product_ID = Convert.ToInt32(id),
+                    Product_Name = name,
+                    Description = description,
+                    Price= Convert.ToDecimal(price),
+                    Supplier_ID = Convert.ToInt32(supplier)
                 };
 
                 // Call the API with the CustomersViewModel object
                 ApiManager apiManager = new ApiManager(_httpClient);
-                var output1 = await apiManager.CallApiAsync<ShopViewModel, ShopViewModel>($"/api/Shop", shopViewModel, System.Web.Mvc.HttpVerbs.Post);
+                var output1 = await apiManager.CallApiAsync<ProductViewModel, ProductViewModel>($"/api/Products", productViewModel, System.Web.Mvc.HttpVerbs.Post);
 
                 // Set success message
                 //ViewBag.Message = "Customer details updated successfully.";
@@ -93,46 +96,42 @@ namespace WineStore.WebSite.Controllers
             ApiManager apiManager = new ApiManager(_httpClient);
 
             var input1 = new { Id = id };
-            var output1 = await apiManager.CallApiAsync<dynamic, ShopViewModel>($"/api/Shop/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
-            return View("EditShop", output1);
-          
+            var output1 = await apiManager.CallApiAsync<dynamic, ProductViewModel>($"/api/Products/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
+            return View("EditProduct", output1);
+
         }
 
         // POST: ShopController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditShop(int id, IFormCollection collection)
+        public async Task<ActionResult> EditProduct(int id, IFormCollection collection)
         {
             try
             {
-
-                var Id = id;
-                var name = collection["Shop_Name"];
-                var address = collection["Location"];
-
+                var Id = collection["Product_ID"];
+                var name = collection["Product_Name"];
+                var description = collection["Description"];
+                var price = collection["Price"];
+                var supplier = collection["Supplier_ID"];
                 // Create a CustomersViewModel object
-                var shopViewModel = new ShopViewModel
+                var productViewModel = new ProductViewModel
                 {
-                    Shop_ID = Convert.ToInt32(Id),
-                    Shop_Name = name,
-                    Location = address
-
+                    Product_ID = Convert.ToInt32(Id),
+                    Product_Name = name,
+                    Description = description,
+                    Price = Convert.ToDecimal(price),
+                    Supplier_ID = Convert.ToInt32(supplier)
                 };
 
                 // Call the API with the CustomersViewModel object
                 ApiManager apiManager = new ApiManager(_httpClient);
-              
-                var output1 = await apiManager.CallApiAsync<dynamic, ShopViewModel>($"/api/Shop/{id}", shopViewModel, System.Web.Mvc.HttpVerbs.Put);
-                // Set success message
 
-                //TempData["Message"] = "Customer details updated successfully.";
+                var output1 = await apiManager.CallApiAsync<dynamic, ProductViewModel>($"/api/Products/{Id}", productViewModel, System.Web.Mvc.HttpVerbs.Put);
+                
                 return RedirectToAction("Index");
             }
             catch
             {
-                // Set success message
-                //TempData["Message"] = "Something went wrong when updating the data.";
-
                 return View();
             }
         }

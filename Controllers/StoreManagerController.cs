@@ -9,16 +9,18 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using WineStore.WebSite.Models.Admin;
 using WineStore.WebSite.Managers;
+using WineStore.WebSite.Models.PurchaseManager;
+using WineStore.WebSite.Models.StoreManager;
 
 namespace WineStore.WebSite.Controllers
 {
 
-    public class AdminController : Controller
+    public class StoreManagerController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AdminController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public StoreManagerController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
             _httpContextAccessor = httpContextAccessor;
@@ -29,28 +31,29 @@ namespace WineStore.WebSite.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var model = new AdminHomeViewModel
+            var model = new StoreManagerHomeViewModel
             {
                 UserName = _httpContextAccessor.HttpContext.Session.GetString("UserName"),
                 NavigationLinkViewModel = new List<NavigationLinkViewModel>
                 {
                     new NavigationLinkViewModel
                     {
-                        Text = "Shop",
+                        Text = "Orders",
                         Area = "",
-                        Controller = "Admin",
-                        Action = "GoToShops",
-                         Icon="fa fa-shopping-cart",
+                        Controller = "StoreManager",
+                        Action = "GoToOrders",
+                         Icon="fa-solid fa-shop",
                     },
-                   
                     new NavigationLinkViewModel
                     {
-                        Text = "Add Employees",
+                        Text = "Expenses",
                         Area = "",
-                        Controller = "Admin",
-                        Action = "AddEmployee",
-                         Icon="fa fa-user-plus",
+                        Controller = "StoreManager",
+                        Action = "GoToExpenses",
+                        Icon="fa-solid fa-money-bill",
+
                     }
+                    
                 }
             };
 
@@ -58,17 +61,18 @@ namespace WineStore.WebSite.Controllers
         }
        
 
-        public async Task<IActionResult> AddEmployee()
+        public async Task<IActionResult> GoToOrders()
         {
 
-            return RedirectToAction("Index", "Employee");
+            return RedirectToAction("Index", "Order");
         }
 
-        public async Task<IActionResult> GoToShops()
+        public async Task<IActionResult> GoToExpenses()
         {
 
-            return RedirectToAction("Index", "Shop");
+            return RedirectToAction("Index", "Expense");
         }
+        
 
 
     }

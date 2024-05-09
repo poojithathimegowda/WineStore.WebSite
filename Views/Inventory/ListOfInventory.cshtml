@@ -1,0 +1,53 @@
+﻿@model IEnumerable<WineStore.WebSite.Models.PurchaseManager.InventoryViewModel>
+
+@{
+    ViewData["Title"] = "ListOfInventory";
+}
+
+<h1>ListOfInventory</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Inventory_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Shop_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inventory_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Shop_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                    @Html.ActionLink("Edit", "Edit", new { id=item.Inventory_ID }) |
+                @Html.ActionLink("Details", "Details", new {  id=item.Inventory_ID }) |
+                @Html.ActionLink("Delete", "Delete", new {id=item.Inventory_ID})
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
