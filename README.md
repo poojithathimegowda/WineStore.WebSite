@@ -1,2 +1,2 @@
 # WineStore.WebSite
-WineStore.WebSite
+WineShopAccountingSystem.WebSite
