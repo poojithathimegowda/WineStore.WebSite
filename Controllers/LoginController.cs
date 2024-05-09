@@ -67,11 +67,7 @@ namespace WineStore.WebSite.Controllers
 
                     // Extract the token and prepend it with "Bearer "
                     string bearerToken = tokenResponse.Token;
-                    //string role = tokenResponse.Roles.FirstOrDefault();
-
-                    // Store the token securely (e.g., in session or cookie)
-
-                    // Inside the Login action of LoginController after successful login
+                    
                     HttpContext.Session.SetString("AuthToken", bearerToken);
                     HttpContext.Session.SetString("AuthRole", role);
 
@@ -81,33 +77,27 @@ namespace WineStore.WebSite.Controllers
                     switch (role.ToUpper())
                     {
 
-
-
                         case "ADMIN":
-
-                            Console.WriteLine("It is ADMIN");
                             return RedirectToAction("Index", "Admin");
                             break;
 
-                        case "SALESREP":
-                            Console.WriteLine("It is SALESREP");
-                            return RedirectToAction("Index", "Shop");
+                        case "STOREMANAGER":
+
+                            return RedirectToAction("Index", "StoreManager");
                             break;
                         case "PURCHASEMANAGER":
-                            Console.WriteLine("It is PURCHASEMANAGER");
-                            return RedirectToAction("Index", "Shop");
+
+                            return RedirectToAction("Index", "PurchaseManager");
                             break;
 
                         default:
-                            Console.WriteLine("Authentication failed");
-                            // Authentication failed, return back to login page with error message
                             ModelState.AddModelError(string.Empty, "Invalid username or password.");
                             return View("Index", model);
                             break;
                     }
 
                     // Redirect to home page or another secure area after successful login
-                   
+
                 }
                 else
                 {

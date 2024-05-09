@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WineStore.WebSite</title>
+    <title>@ViewData["Title"] Wine Store Accounting System </title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WineStore.WebSite.styles.css" asp-append-version="true" />
@@ -58,7 +58,7 @@
                     <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                         Menu
                     </button>
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WineStore.WebSite</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Wine Store Accounting System</a>
                     <!-- rest of your navbar here -->
 
                 </div>
@@ -92,46 +92,37 @@
                             <li>
                                 <a asp-area="" asp-controller="Admin" asp-action="GoToShops">Shop</a>
                             </li>
+                           
                             <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="GoToCustomersPage">Customers</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="Logout">Suppliers</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="Logout">Chart of Accounts</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="Logout">Add Empolyees</a>
+                                <a asp-area="" asp-controller="Admin" asp-action="AddEmployee">Add Empolyees</a>
                             </li>
                         }
 
-                        @if (Context.Session.GetString("AuthRole").ToUpper() == "SALESREP")
+                        @if (Context.Session.GetString("AuthRole").ToUpper() == "STOREMANAGER")
                         {
                             <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Sales Register</a>
+                                <a asp-area="" asp-controller="StoreManager" asp-action="GoToOrders">Orders</a>
                             </li>
                             <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Expenses Claims</a>
+                                <a asp-area="" asp-controller="StoreManager" asp-action="GoToExpenses">Expenses Claims</a>
                             </li>
                         }
 
                         @if (Context.Session.GetString("AuthRole").ToUpper() == "PURCHASEMANAGER")
                         {
                             <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Purchase Register</a>
+                                <a asp-area="" asp-controller="PurchaseManager" asp-action="GoToSuppliers">Suppliers</a>
                             </li>
 
                             <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">View Inventory</a>
+                                <a asp-area="" asp-controller="PurchaseManager" asp-action="GoToInventory">View Inventory</a>
                             </li>
                             <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Products Page</a>
+                                <a asp-area="" asp-controller="PurchaseManager" asp-action="GoToProducts">Products</a>
                             </li>
                         }
                     
-
-                
+                    
 
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Logout" title="Click here to logout" style="cursor: pointer;">
@@ -150,94 +141,12 @@
 
     </header>
 
-
-  @*  @if (Context.Session.GetString("AuthToken") != null)
-    {
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
-                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="navbar-nav">
-
-                    <!-- Add profile section here -->
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index">
-                            <i class="fa fa-user"></i>
-                            @Context.Session.GetString("UserName")
-                        </a>
-                    </li>
-                   
-
-                  
-                        @if (Context.Session.GetString("AuthRole").ToUpper() == "ADMIN")
-                        {
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="GoToShops">Shop</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="GoToCustomersPage">Customers</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="Logout">Suppliers</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="Logout">Chart of Accounts</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="Logout">Add Empolyees</a>
-                            </li>
-                        }
-
-                        @if (Context.Session.GetString("AuthRole").ToUpper() == "SALESREP")
-                        {
-                            <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Sales Register</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Expenses Claims</a>
-                            </li>
-                        }
-
-                        @if (Context.Session.GetString("AuthRole").ToUpper() == "PURCHASEMANAGER")
-                        {
-                            <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Purchase Register</a>
-                            </li>
-
-                            <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">View Inventory</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Login" asp-action="Logout">Products Page</a>
-                            </li>
-                        }
-                    
-
-                
-
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Logout" title="Click here to logout" style="cursor: pointer;">
-                            <span style="display: inline-block;" onmouseover="this.style.color='red';" onmouseout="this.style.color='black';">
-                                Logout
-                                <i class="fa fa-sign-out"></i>
-                            </span>
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-    }*@
-
-
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
+   
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - WineStore.WebSite - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

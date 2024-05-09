@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using WineStore.WebSite.Managers;
 using WineStore.WebSite.Models.Admin;
+using WineStore.WebSite.Models.PurchaseManager;
 
 namespace WineStore.WebSite.Controllers
 {
-    public class ShopController : Controller
+    public class SupplierController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ShopController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public SupplierController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
             _httpContextAccessor = httpContextAccessor;
@@ -27,8 +28,8 @@ namespace WineStore.WebSite.Controllers
             {
                 ApiManager apiManager = new ApiManager(_httpClient);
                 var input1 = new { };
-                var output1 = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input1, System.Web.Mvc.HttpVerbs.Get);
-                return View("ListOfShops", output1);
+                var output1 = await apiManager.CallApiAsync<dynamic, List<SupplierViewModel>>("/api/Suppliers", input1, System.Web.Mvc.HttpVerbs.Get);
+                return View("ListOfSuppliers", output1);
             }
             catch
             {
@@ -46,32 +47,32 @@ namespace WineStore.WebSite.Controllers
         // GET: ShopController/Create
         public ActionResult Create()
         {
-            return View("AddShop");
+            return View("AddSupplier");
         }
 
         // POST: ShopController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateNewShop(IFormCollection collection)
+        public async Task<ActionResult> AddSupplier(IFormCollection collection)
         {
             try
             {
-                //var id = collection["Shop_ID"];
-                var name = collection["Shop_Name"];
-                var address = collection["Location"];
+
+                var name = collection["Supplier_Name"];
+                var contact = collection["Contact_Details"];
 
                 // Create a CustomersViewModel object
-                var shopViewModel = new ShopViewModel
+                var supplierViewModel = new SupplierViewModel
                 {
-                    //Shop_ID = Convert.ToInt32(id) , 
-                    Shop_Name = name,
-                    Location = address
-                    
+
+                    Supplier_Name = name,
+                    Contact_Details = contact
+
                 };
 
                 // Call the API with the CustomersViewModel object
                 ApiManager apiManager = new ApiManager(_httpClient);
-                var output1 = await apiManager.CallApiAsync<ShopViewModel, ShopViewModel>($"/api/Shop", shopViewModel, System.Web.Mvc.HttpVerbs.Post);
+                var output1 = await apiManager.CallApiAsync<SupplierViewModel, SupplierViewModel>($"/api/Suppliers", supplierViewModel, System.Web.Mvc.HttpVerbs.Post);
 
                 // Set success message
                 //ViewBag.Message = "Customer details updated successfully.";
@@ -93,36 +94,36 @@ namespace WineStore.WebSite.Controllers
             ApiManager apiManager = new ApiManager(_httpClient);
 
             var input1 = new { Id = id };
-            var output1 = await apiManager.CallApiAsync<dynamic, ShopViewModel>($"/api/Shop/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
-            return View("EditShop", output1);
-          
+            var output1 = await apiManager.CallApiAsync<dynamic, SupplierViewModel>($"/api/Suppliers/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
+            return View("EditSupplier", output1);
+
         }
 
         // POST: ShopController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditShop(int id, IFormCollection collection)
+        public async Task<ActionResult> EditSupplier(int id, IFormCollection collection)
         {
             try
             {
 
-                var Id = id;
-                var name = collection["Shop_Name"];
-                var address = collection["Location"];
+                var Id = collection["Supplier_ID"];
+                var name = collection["Supplier_Name"];
+                var contact = collection["Contact_Details"];
 
                 // Create a CustomersViewModel object
-                var shopViewModel = new ShopViewModel
+                var supplierViewModel = new SupplierViewModel
                 {
-                    Shop_ID = Convert.ToInt32(Id),
-                    Shop_Name = name,
-                    Location = address
+                    Supplier_ID = Convert.ToInt32(Id),
+                    Supplier_Name = name,
+                    Contact_Details = contact
 
                 };
 
                 // Call the API with the CustomersViewModel object
                 ApiManager apiManager = new ApiManager(_httpClient);
-              
-                var output1 = await apiManager.CallApiAsync<dynamic, ShopViewModel>($"/api/Shop/{id}", shopViewModel, System.Web.Mvc.HttpVerbs.Put);
+
+                var output1 = await apiManager.CallApiAsync<dynamic, ShopViewModel>($"/api/Suppliers/{id}", supplierViewModel, System.Web.Mvc.HttpVerbs.Put);
                 // Set success message
 
                 //TempData["Message"] = "Customer details updated successfully.";
