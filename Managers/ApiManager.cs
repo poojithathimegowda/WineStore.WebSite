@@ -15,7 +15,12 @@ namespace WineStore.WebSite.Managers
             _httpClient = httpClient;
         }
 
-        public async Task<TOutput> CallApiAsync<TInput, TOutput>(string endpoint, TInput input, HttpVerbs httpMethod)
+        public Task<TOutput> CallApiAsync<TInput, TOutput>(string endpoint, TInput input, HttpVerbs httpMethod)
+        {
+            return CallApiAsync<TInput, TOutput>(endpoint, input, httpMethod, encodingSchema);
+        }
+
+        public async Task<TOutput> CallApiAsync<TInput, TOutput>(string endpoint, TInput input, HttpVerbs httpMethod, Encoding encodingSchema)
         {
 
           
@@ -35,6 +40,9 @@ namespace WineStore.WebSite.Managers
                     break;
                 case (HttpVerbs.Put):
                     response = await _httpClient.PutAsync(endpoint, new StringContent(jsonInput, encodingSchema, contentType));
+                    break;
+                case (HttpVerbs.Delete):
+                    response = await _httpClient.DeleteAsync(endpoint);
                     break;
                 default:
                     response = await _httpClient.GetAsync(endpoint);

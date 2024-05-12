@@ -17,31 +17,13 @@
                 <input asp-for="Order_ID" class="form-control" />
                 <span asp-validation-for="Order_ID" class="text-danger"></span>
             </div>
+            <!-- Other form fields -->
             <div class="form-group">
-                <label asp-for="Shop_ID" class="control-label"></label>
-                <input asp-for="Shop_ID" class="form-control" />
-                <span asp-validation-for="Shop_ID" class="text-danger"></span>
+                <label asp-for="Product_Name" class="control-label"></label>
+                <input asp-for="Product_Name" id="productNameInput" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Product_Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Product_ID" class="control-label"></label>
-                <input asp-for="Product_ID" class="form-control" />
-                <span asp-validation-for="Product_ID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Total_Amount" class="control-label"></label>
-                <input asp-for="Total_Amount" class="form-control" />
-                <span asp-validation-for="Total_Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Order_Date" class="control-label"></label>
-                <input asp-for="Order_Date" class="form-control" />
-                <span asp-validation-for="Order_Date" class="text-danger"></span>
-            </div>
+            <!-- Other form fields -->
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -54,5 +36,35 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#productNameInput").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "https://wineshopwebapi20240423191025.azurewebsites.net/api/Products/AutoComplete",
+                        type: "GET",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.label,
+                                    value: item.value
+                                };
+                            }));
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching product names:", error);
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        });
+    </script>
 }
