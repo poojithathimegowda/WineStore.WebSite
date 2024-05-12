@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
 using WineStore.WebSite.Managers;
 using WineStore.WebSite.Models.Admin;
@@ -45,9 +46,25 @@ namespace WineStore.WebSite.Controllers
         }
 
         // GET: ShopController/Create
-        public ActionResult Create()
+        public async Task<ActionResult>  Create()
         {
-            return View("AddProduct");
+            ApiManager apiManager = new ApiManager(_httpClient);
+            var input1 = new { };
+            var outputSupplierViewModel = await apiManager.CallApiAsync<dynamic, List<SupplierViewModel>>("/api/Suppliers", input1, System.Web.Mvc.HttpVerbs.Get);
+
+
+
+            ProductViewModel p1 = new ProductViewModel();
+
+
+            p1.ExistingSuppliers = new List<SelectListItem>();
+   
+            foreach (var supplieritem in outputSupplierViewModel)
+            {
+                p1.ExistingSuppliers.Add(new SelectListItem() { Text = supplieritem.Supplier_Name, Value = supplieritem.Supplier_ID.ToString() });
+            }
+
+            return View("AddProduct", p1);
         }
 
         // POST: ShopController/Create
@@ -57,33 +74,31 @@ namespace WineStore.WebSite.Controllers
         {
             try
             {
-                var id = collection["Product_ID"];
+              
                 var name = collection["Product_Name"];
                 var description = collection["Description"];
                 var price = collection["Price"];
-                var supplier = collection["Supplier_ID"];
+                var supplier = collection["SelectedSupplier"];
                 // Create a CustomersViewModel object
-                var productViewModel = new ProductViewModel
+                var product = new Product()
                 {
-                    Product_ID = Convert.ToInt32(id),
+                   
                     Product_Name = name,
                     Description = description,
-                    Price= Convert.ToDecimal(price),
+                    Price = Convert.ToDecimal(price),
                     Supplier_ID = Convert.ToInt32(supplier)
                 };
 
+               
+
                 // Call the API with the CustomersViewModel object
                 ApiManager apiManager = new ApiManager(_httpClient);
-                var output1 = await apiManager.CallApiAsync<ProductViewModel, ProductViewModel>($"/api/Products", productViewModel, System.Web.Mvc.HttpVerbs.Post);
-
-                // Set success message
-                //ViewBag.Message = "Customer details updated successfully.";
-                //TempData["Message"] = "Customer details added successfully.";
+                var output1 = await apiManager.CallApiAsync<Product, dynamic>($"/api/Products", product, System.Web.Mvc.HttpVerbs.Post);
 
                 return RedirectToAction("Index");
 
             }
-            catch
+            catch(Exception exp)
             {
                 //TempData["Error"] = "An error occurred while adding customer details. Please try again.";
                 return View();
@@ -97,6 +112,24 @@ namespace WineStore.WebSite.Controllers
 
             var input1 = new { Id = id };
             var output1 = await apiManager.CallApiAsync<dynamic, ProductViewModel>($"/api/Products/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
+
+
+            var outputSupplierViewModel = await apiManager.CallApiAsync<dynamic, List<SupplierViewModel>>("/api/Suppliers", input1, System.Web.Mvc.HttpVerbs.Get);
+
+
+
+
+
+            output1.ExistingSuppliers = new List<SelectListItem>();
+
+            foreach (var supplieritem in outputSupplierViewModel)
+            {
+                output1.ExistingSuppliers.Add(new SelectListItem() { Text = supplieritem.Supplier_Name, Value = supplieritem.Supplier_ID.ToString() });
+            }
+
+
+         
+
             return View("EditProduct", output1);
 
         }
@@ -112,7 +145,7 @@ namespace WineStore.WebSite.Controllers
                 var name = collection["Product_Name"];
                 var description = collection["Description"];
                 var price = collection["Price"];
-                var supplier = collection["Supplier_ID"];
+                var supplier = collection["SelectedSupplier"];
                 // Create a CustomersViewModel object
                 var productViewModel = new ProductViewModel
                 {
@@ -137,18 +170,47 @@ namespace WineStore.WebSite.Controllers
         }
 
         // GET: ShopController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            ApiManager apiManager = new ApiManager(_httpClient);
+
+            var input1 = new { Id = id };
+            var output1 = await apiManager.CallApiAsync<dynamic, ProductViewModel>($"/api/Products/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
+
+
+            var outputSupplierViewModel = await apiManager.CallApiAsync<dynamic, List<SupplierViewModel>>("/api/Suppliers", input1, System.Web.Mvc.HttpVerbs.Get);
+
+
+
+
+
+            output1.ExistingSuppliers = new List<SelectListItem>();
+
+            foreach (var supplieritem in outputSupplierViewModel)
+            {
+                output1.ExistingSuppliers.Add(new SelectListItem() { Text = supplieritem.Supplier_Name, Value = supplieritem.Supplier_ID.ToString() });
+            }
+
+
+
+
+           
+            return View("DeleteProduct", output1);
         }
 
         // POST: ShopController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, IFormCollection collection)
         {
             try
             {
+                ApiManager apiManager = new ApiManager(_httpClient);
+
+                var input1 = new { Id = id };
+                var output1 = await apiManager.CallApiAsync<dynamic, ProductViewModel>($"/api/Products/{id}", input1, System.Web.Mvc.HttpVerbs.Delete);
+
+
                 return RedirectToAction(nameof(Index));
             }
             catch
