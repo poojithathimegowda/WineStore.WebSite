@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WineStore.WebSite.Models.StoreManager.OrderViewModel>
+﻿@model IEnumerable<WineStore.WebSite.Models.StoreManager.Orders>
 
 @{
     ViewData["Title"] = "ListOfOrders";
@@ -19,7 +19,13 @@
                 @Html.DisplayNameFor(model => model.Shop_ID)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Shop_Name)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Product_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product_Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Quantity)
@@ -34,32 +40,39 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Order_ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Shop_ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Product_ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Total_Amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Order_Date)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Shop_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Shop_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total_Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order_Date)
+                </td>
+                <td>
                     @Html.ActionLink("Edit", "Edit", new {  id=item.Order_ID }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Order_ID}) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Order_ID})
-            </td>
-        </tr>
-}
+
+                    @Html.ActionLink("Delete", "Delete", new { id=item.Order_ID})
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

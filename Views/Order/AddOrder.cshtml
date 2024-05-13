@@ -1,29 +1,28 @@
 ﻿@model WineStore.WebSite.Models.StoreManager.OrderViewModel
 
 @{
-    ViewData["Title"] = "EditOrders";
+    ViewData["Title"] = "AddOrder";
 }
 
-<h1>EditOrders</h1>
+<h1>AddOrder</h1>
 
 <h4>OrderViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditOrders">
+        <form asp-action="AddOrder">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Order_ID" class="control-label"></label>
                 <input asp-for="Order_ID" class="form-control" />
                 <span asp-validation-for="Order_ID" class="text-danger"></span>
             </div>
-           
+            
             <div class="form-group">
                 <select asp-for="SelectedProducts" class="form-control" asp-items="@(new SelectList(Model.ExistingProducts, "Value", "Text"))">
                     <option value="">Selected Product</option>
                 </select>
             </div>
-            
             <div class="form-group">
                 <select asp-for="SelectedShop" class="form-control" asp-items="@(new SelectList(Model.ExistingShop, "Value", "Text"))">
                     <option value="">Selected Shop</option>
@@ -45,7 +44,7 @@
                 <span asp-validation-for="Order_Date" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>

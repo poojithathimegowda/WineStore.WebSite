@@ -13,7 +13,8 @@ namespace WineStore.WebSite.Models.PurchaseManager
         public decimal Price { get; set; }
 
         public int Supplier_ID { get; set; }
-       
+        public string Supplier_Name { get; set; }
+
     }
 
 

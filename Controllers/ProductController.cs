@@ -29,7 +29,7 @@ namespace WineStore.WebSite.Controllers
             {
                 ApiManager apiManager = new ApiManager(_httpClient);
                 var input1 = new { };
-                var output1 = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input1, System.Web.Mvc.HttpVerbs.Get);
+                var output1 = await apiManager.CallApiAsync<dynamic, List<Product>>("/api/Products", input1, System.Web.Mvc.HttpVerbs.Get);
                 return View("ListOfProducts", output1);
             }
             catch
@@ -115,9 +115,6 @@ namespace WineStore.WebSite.Controllers
 
 
             var outputSupplierViewModel = await apiManager.CallApiAsync<dynamic, List<SupplierViewModel>>("/api/Suppliers", input1, System.Web.Mvc.HttpVerbs.Get);
-
-
-
 
 
             output1.ExistingSuppliers = new List<SelectListItem>();
