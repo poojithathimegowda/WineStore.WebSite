@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WineStore.WebSite.Models.PurchaseManager.ProductViewModel>
+﻿@model IEnumerable<WineStore.WebSite.Models.PurchaseManager.Product>
 
 @{
     ViewData["Title"] = "ListOfProducts";
@@ -27,6 +27,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Supplier_ID)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Supplier_Name)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -48,9 +51,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Supplier_ID)
             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier_Name)
+                </td>
             <td>
                     @Html.ActionLink("Edit", "Edit", new {id=item.Product_ID }) |
-                    @Html.ActionLink("Details", "Details", new {id=item.Product_ID }) |
+                   
                 @Html.ActionLink("Delete", "Delete", new {id=item.Product_ID })
             </td>
         </tr>
