@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using WineStore.WebSite.Models.Admin;
 using WineStore.WebSite.Managers;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 
 namespace WineStore.WebSite.Controllers
 {
@@ -50,6 +52,15 @@ namespace WineStore.WebSite.Controllers
                         Controller = "Admin",
                         Action = "AddEmployee",
                          Icon="fa fa-user-plus",
+                    },
+
+                     new NavigationLinkViewModel
+                    {
+                        Text = "View Reports",
+                        Area = "",
+                        Controller = "Admin",
+                        Action = "DownloadPDF",
+                         Icon="fa fa-user-plus",
                     }
                 }
             };
@@ -69,6 +80,33 @@ namespace WineStore.WebSite.Controllers
 
             return RedirectToAction("Index", "Shop");
         }
+
+        public async Task<IActionResult> DownloadPDF()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            Document document = new Document();
+            PdfWriter.GetInstance(document, memoryStream);
+
+            document.Open();
+            document.Add(new Paragraph("Hello, World!"));
+            document.Close();
+
+            byte[] bytes = memoryStream.ToArray();
+            memoryStream.Close();
+
+            // Clear the response for proper PDF content
+            Response.Clear();
+
+            // Set the content type and headers
+            Response.ContentType = "application/pdf";
+            Response.Headers.Add("Content-Disposition", "attachment;filename=example.pdf");
+
+            // Write the PDF content to the response
+            await Response.Body.WriteAsync(bytes, 0, bytes.Length);
+
+            return new EmptyResult();
+        }
+
 
 
     }
