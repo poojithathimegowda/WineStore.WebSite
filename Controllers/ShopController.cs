@@ -52,7 +52,7 @@ namespace WineStore.WebSite.Controllers
         // POST: ShopController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateNewShop(IFormCollection collection)
+        public async Task<ActionResult> Create(IFormCollection collection)
         {
             try
             {
@@ -72,10 +72,6 @@ namespace WineStore.WebSite.Controllers
                 // Call the API with the CustomersViewModel object
                 ApiManager apiManager = new ApiManager(_httpClient);
                 var output1 = await apiManager.CallApiAsync<ShopViewModel, ShopViewModel>($"/api/Shop", shopViewModel, System.Web.Mvc.HttpVerbs.Post);
-
-                // Set success message
-                //ViewBag.Message = "Customer details updated successfully.";
-                //TempData["Message"] = "Customer details added successfully.";
 
                 return RedirectToAction("Index");
 
