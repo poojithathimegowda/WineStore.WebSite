@@ -1,59 +1,59 @@
 ﻿@model IEnumerable<WineStore.WebSite.Models.StoreManager.ExpenseViewModel>
 
 @{
-    ViewData["Title"] = "ListOfExpenses";
+    ViewData["Title"] = "List of Expenses";
 }
 
-<h1>ListOfExpenses</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>@ViewData["Title"]</h1>
+        </header>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Expense_ID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Shop_ID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Expense_Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Amount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Expense_ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Shop_ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Expense_Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                    @Html.ActionLink("Edit", "Edit", new {  id=item.Expense_ID}) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Expense_ID }) |
-                @Html.ActionLink("Delete", "Delete", new {  id=item.Expense_ID })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <p>
+            <a asp-action="Create" class="btn btn-primary">Create New</a>
+        </p>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.First().Expense_ID)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Shop_ID)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Expense_Type)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Amount)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Date)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Expense_ID)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Shop_ID)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Expense_Type)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Amount)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Date)</td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Expense_ID }) | 
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Expense_ID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

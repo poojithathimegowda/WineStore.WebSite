@@ -1,0 +1,42 @@
+﻿@model WineStore.WebSite.Models.PurchaseManager.InventoryViewModel
+@{
+    ViewData["Title"] = "List Of Inventory Based On Shop";
+}
+
+<h2>Inventory</h2>
+
+<form asp-action="Index" method="post">
+
+
+    <select asp-for="SelectedShop" class="form-control" asp-items="@(new SelectList(Model.ExistingShop, "Value", "Text", Model.SelectedShop))">
+        <option value="">Select Shop</option>
+    </select>
+   
+    <button type="submit" class="btn btn-primary">Go</button>
+</form>
+
+
+<div id="inventoryContainer">
+    @await Html.PartialAsync("_InventoryPartial", Model)
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('form').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function (data) {
+                    $('#inventoryContainer').html(data);
+                },
+                error: function () {
+                    alert('An error occurred while generating the report. Please try again.');
+                }
+            });
+        });
+    });
+</script>

@@ -1,47 +1,28 @@
 ﻿@model WineStore.WebSite.Models.Admin.AdminHomeViewModel
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Home Page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <style>
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            padding: 20px;
-        }
-
-        .dashboard-button {
-            padding: 10px;
-            background-color: #4CAF50; /* Green */
-            border: none;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px; /* Adjust this to change the size of the titles */
-            margin: 4px 2px;
-            cursor: pointer;
-            width: 100%; /* Make the button full width for a mobile app look */
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
 <body>
-    <h1>Welcome @Model.UserName</h1>
-    <h2>To Admin Dashboard</h2>
-    <div class="dashboard-grid">
-
+    <header>
+        <h1>Welcome @Model.UserName</h1>
+        <h2>To Admin Dashboard</h2>
+    </header>
+    <main class="dashboard-grid">
         @foreach (var link in Model.NavigationLinkViewModel)
         {
-            <a asp-area="@link.Area" asp-controller="@link.Controller" asp-action="@link.Action">
+            <a class="dashboard-link" asp-area="@link.Area" asp-controller="@link.Controller" asp-action="@link.Action">
                 <button class="dashboard-button">
-                    <i class="@link.Icon"></i> 
-                @link.Text
+                    <i class="@link.Icon"></i> @link.Text
                 </button>
             </a>
         }
-    </div>
+    </main>
 </body>
 </html>

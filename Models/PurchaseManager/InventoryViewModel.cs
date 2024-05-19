@@ -5,7 +5,6 @@ namespace WineStore.WebSite.Models.PurchaseManager
 {
     public class Inventory
     {
-
         public int Inventory_ID { get; set; }
         public int Product_ID { get; set; }
 
@@ -15,11 +14,9 @@ namespace WineStore.WebSite.Models.PurchaseManager
         public int Quantity { get; set; }
 
     }
-
-
-
     public class InventoryViewModel
     {
+        public List<Inventory> inventoryList { get; set; }
         public int Inventory_ID { get; set; }
         public int Product_ID { get; set; }
 
@@ -37,9 +34,9 @@ namespace WineStore.WebSite.Models.PurchaseManager
 
         public SelectListItem SelectedShop { get; set; }
     }
-    public class InventoryCompositeViewModel
-    {
-        public InventoryViewModel ExistingProducts { get; set; }
-        public InventoryViewModel ExistingShop { get; set; }
-    }
+    //public class InventoryCompositeViewModel
+    //{
+    //    public InventoryViewModel ExistingProducts { get; set; }
+    //    public InventoryViewModel ExistingShop { get; set; }
+    //}
 }

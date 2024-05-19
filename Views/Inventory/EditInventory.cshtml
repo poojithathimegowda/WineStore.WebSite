@@ -17,28 +17,17 @@
                 <input asp-for="Inventory_ID" class="form-control" />
                 <span asp-validation-for="Inventory_ID" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-            <label asp-for="Product_ID" class="control-label"></label>
-            <input asp-for="Product_ID" class="form-control" />
-            <span asp-validation-for="Product_ID" class="text-danger"></span>
-            </div>*@
             <div class="form-group">
                 <select asp-for="SelectedProducts" class="form-control" asp-items="@(new SelectList(Model.ExistingProducts, "Value", "Text"))">
                     <option value="">Selected Product</option>
                 </select>
             </div>
-            @* <div class="form-group">
-            @*<div class="form-group">
-            <label asp-for="Shop_ID" class="control-label"></label>
-            <input asp-for="Shop_ID" class="form-control" />
-            <span asp-validation-for="Shop_ID" class="text-danger"></span>
-            </div>*@
             <div class="form-group">
                 <select asp-for="SelectedShop" class="form-control" asp-items="@(new SelectList(Model.ExistingShop, "Value", "Text"))">
                     <option value="">Selected Shop</option>
                 </select>
             </div>
-            <div class="form-group">
+           
                 <div class="form-group">
                     <label asp-for="Quantity" class="control-label"></label>
                     <input asp-for="Quantity" class="form-control" />
@@ -55,8 +44,4 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+

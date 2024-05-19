@@ -11,142 +11,139 @@ namespace WineStore.WebSite.Controllers
     public class ExpenseController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ExpenseController(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClientFactory.CreateClient("MyHttpClient");
-            _httpContextAccessor = httpContextAccessor;
-
-            string authToken = _httpContextAccessor.HttpContext.Session.GetString("AuthToken");
-            // Set auth token in request header
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            var authToken = httpContextAccessor.HttpContext.Session.GetString("AuthToken");
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            }
         }
-        // GET: ShopController
-        public async Task<ActionResult> Index()
+
+        // GET: ExpenseController
+        public async Task<IActionResult> Index()
         {
             try
             {
-                ApiManager apiManager = new ApiManager(_httpClient);
-                var input1 = new { };
-                var output1 = await apiManager.CallApiAsync<dynamic, List<ExpenseViewModel>>($"/api/Expenses", input1, System.Web.Mvc.HttpVerbs.Get);
-                return View("ListOfExpenses", output1);
+                var apiManager = new ApiManager(_httpClient);
+                var expenses = await apiManager.CallApiAsync<dynamic, List<ExpenseViewModel>>("/api/Expenses", null, System.Web.Mvc.HttpVerbs.Get);
+                return View("ListOfExpenses", expenses);
             }
             catch
             {
-                return View();
+                return View("Error");
             }
-
         }
 
-        // GET: ShopController/Details/5
-        public async Task<ActionResult> Details(int id)
+        // GET: ExpenseController/Details/5
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
+            try
+            {
+                var apiManager = new ApiManager(_httpClient);
+                var expense = await apiManager.CallApiAsync<dynamic, ExpenseViewModel>($"/api/Expenses/{id}", null, System.Web.Mvc.HttpVerbs.Get);
+                return View("ExpenseDetails", expense);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
-        // GET: ShopController/Create
-        public ActionResult Create()
+        // GET: ExpenseController/Create
+        public IActionResult Create()
         {
             return View("AddNewExpense");
         }
 
-        // POST: ShopController/Create
+        // POST: ExpenseController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddNewExpense(IFormCollection collection)
+        public async Task<IActionResult> AddNewExpense(ExpenseViewModel expenseViewModel)
         {
             try
             {
-                var id = collection["Expense_ID"];
-                var shop = collection["Shop_ID"];
-                var type = collection["Expense_Type"];
-                var amt = collection["Amount"];
-                var date = collection["Date"];
-                var expenseViewModel = new ExpenseViewModel
+                if (ModelState.IsValid)
                 {
-                    Expense_ID = Convert.ToInt32(id),
-                    Shop_ID = Convert.ToInt32(shop),
-                    Expense_Type = type,
-                    Amount = Convert.ToDecimal(amt),
-                    Date = Convert.ToDateTime(date)
-                };
-                // Call the API with the CustomersViewModel object
-                ApiManager apiManager = new ApiManager(_httpClient);
-                var output1 = await apiManager.CallApiAsync<ExpenseViewModel, ExpenseViewModel>($"/api/Expenses", expenseViewModel, System.Web.Mvc.HttpVerbs.Post);
-
-                return RedirectToAction("Index");
-
+                    var apiManager = new ApiManager(_httpClient);
+                    await apiManager.CallApiAsync<ExpenseViewModel, ExpenseViewModel>("/api/Expenses", expenseViewModel, System.Web.Mvc.HttpVerbs.Post);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View("AddNewExpense", expenseViewModel);
             }
             catch
             {
-                return View();
+                return View("Error");
             }
         }
 
-        // GET: ShopController/Edit/5
-        public async Task<ActionResult> Edit(int id)
-        {
-            ApiManager apiManager = new ApiManager(_httpClient);
-
-            var input1 = new { Id = id };
-            var output1 = await apiManager.CallApiAsync<dynamic, OrderViewModel>($"/api/Expenses/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
-            return View("EditExpenses", output1);
-
-        }
-
-        // POST: ShopController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditOrders(int id, IFormCollection collection)
+        // GET: ExpenseController/Edit/5
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var Id = collection["Expense_ID"];
-                var shop = collection["Shop_ID"];
-                var type = collection["Expense_Type"];
-                var amt = collection["Amount"];
-                var date = collection["Date"];
-                var expenseViewModel = new ExpenseViewModel
-                {
-                    Expense_ID = Convert.ToInt32(Id),
-                    Shop_ID = Convert.ToInt32(shop),
-                    Expense_Type = type,
-                    Amount = Convert.ToDecimal(amt),
-                    Date = Convert.ToDateTime(date)
-                };
-
-                // Call the API with the CustomersViewModel object
-                ApiManager apiManager = new ApiManager(_httpClient);
-
-                var output1 = await apiManager.CallApiAsync<dynamic, ExpenseViewModel>($"/api/Expenses/{Id}", expenseViewModel, System.Web.Mvc.HttpVerbs.Put);
-
-                return RedirectToAction("Index");
+                var apiManager = new ApiManager(_httpClient);
+                var expense = await apiManager.CallApiAsync<dynamic, ExpenseViewModel>($"/api/Expenses/{id}", null, System.Web.Mvc.HttpVerbs.Get);
+                return View("EditExpenses", expense);
             }
             catch
             {
-                return View();
+                return View("Error");
             }
         }
 
-        // GET: ShopController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ShopController/Delete/5
+        // POST: ExpenseController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> EditExpenses(ExpenseViewModel expenseViewModel)
         {
             try
             {
+                if (ModelState.IsValid)
+                {
+                    var apiManager = new ApiManager(_httpClient);
+                    await apiManager.CallApiAsync<ExpenseViewModel, ExpenseViewModel>($"/api/Expenses/{expenseViewModel.Expense_ID}", expenseViewModel, System.Web.Mvc.HttpVerbs.Put);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View("EditExpenses", expenseViewModel);
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+
+        // GET: ExpenseController/Delete/5
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var apiManager = new ApiManager(_httpClient);
+                var expense = await apiManager.CallApiAsync<dynamic, ExpenseViewModel>($"/api/Expenses/{id}", null, System.Web.Mvc.HttpVerbs.Get);
+                return View("DeleteExpense", expense);
+            }
+            catch
+            {
+                return View("Error");
+            }
+        }
+
+        // POST: ExpenseController/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var apiManager = new ApiManager(_httpClient);
+                await apiManager.CallApiAsync<dynamic, dynamic>($"/api/Expenses/{id}", null, System.Web.Mvc.HttpVerbs.Delete);
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View("Error");
             }
         }
     }
