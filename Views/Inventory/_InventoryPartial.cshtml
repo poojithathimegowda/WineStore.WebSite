@@ -1,0 +1,55 @@
+﻿@model WineStore.WebSite.Models.PurchaseManager.InventoryViewModel
+
+@if (Model.SelectedShop != null)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.inventoryList.FirstOrDefault().Inventory_ID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.inventoryList.FirstOrDefault().Product_ID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.inventoryList.FirstOrDefault().Product_Name)
+                </th>
+                 <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.inventoryList)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Inventory_ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product_ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product_Name)
+                    </td>
+                
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id=item.Inventory_ID }) |
+
+                        @Html.ActionLink("Delete", "Delete", new {id=item.Inventory_ID})
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+   }
+
+

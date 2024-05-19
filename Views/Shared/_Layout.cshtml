@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] Wine Store Accounting System </title>
+    <title>@ViewData["Title"] - Wine Store Accounting System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WineStore.WebSite.styles.css" asp-append-version="true" />
@@ -11,30 +11,24 @@
 </head>
 <body>
     <header>
-
-
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <!-- Main Navigation -->
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WineStore.WebSite</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-
-
                         @if (Context.Session.GetString("AuthToken") != null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Logout">Logout</a>
                             </li>
-
-
-
                         }
                         else
                         {
@@ -42,123 +36,102 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Index">Login</a>
                             </li>
                         }
-
-
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">About Us</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
+        <!-- Secondary Navigation for Authenticated Users -->
         @if (Context.Session.GetString("AuthToken") != null)
         {
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div class="container-fluid">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
                         Menu
                     </button>
                     <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Wine Store Accounting System</a>
-                    <!-- rest of your navbar here -->
-
                 </div>
             </nav>
         }
+    </header>
 
-
-
-         @if (Context.Session.GetString("AuthToken") != null)
+    <!-- Offcanvas Menu for Authenticated Users -->
+    @if (Context.Session.GetString("AuthToken") != null)
     {
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+                <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav">
-
-                    <!-- Add profile section here -->
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index">
-                            <i class="fa fa-user"></i>
-                            @Context.Session.GetString("UserName")
+                            <i class="fa fa-user"></i> @Context.Session.GetString("UserName")
                         </a>
                     </li>
-                   
-
-                  
-                        @if (Context.Session.GetString("AuthRole").ToUpper() == "ADMIN")
-                        {
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="GoToShops">Shop</a>
-                            </li>
-                           
-                            <li>
-                                <a asp-area="" asp-controller="Admin" asp-action="AddEmployee">Add Empolyees</a>
-                            </li>
-                        }
-
-                        @if (Context.Session.GetString("AuthRole").ToUpper() == "STOREMANAGER")
-                        {
-                            <li>
-                                <a asp-area="" asp-controller="StoreManager" asp-action="GoToOrders">Orders</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="StoreManager" asp-action="GoToExpenses">Expenses Claims</a>
-                            </li>
-                        }
-
-                        @if (Context.Session.GetString("AuthRole").ToUpper() == "PURCHASEMANAGER")
-                        {
-                            <li>
-                                <a asp-area="" asp-controller="PurchaseManager" asp-action="GoToSuppliers">Suppliers</a>
-                            </li>
-
-                            <li>
-                                <a asp-area="" asp-controller="PurchaseManager" asp-action="GoToInventory">View Inventory</a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="PurchaseManager" asp-action="GoToProducts">Products</a>
-                            </li>
-                        }
-                    
-                    
-
+                    @if (Context.Session.GetString("AuthRole").ToUpper() == "ADMIN")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="GoToShops">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="AddEmployee">Add Employees</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="GoToReport">View Report</a>
+                        </li>
+                    }
+                    @if (Context.Session.GetString("AuthRole").ToUpper() == "STOREMANAGER")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="StoreManager" asp-action="GoToOrders">Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="StoreManager" asp-action="GoToExpenses">Expense Claims</a>
+                        </li>
+                    }
+                    @if (Context.Session.GetString("AuthRole").ToUpper() == "PURCHASEMANAGER")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="PurchaseManager" asp-action="GoToSuppliers">Suppliers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="PurchaseManager" asp-action="GoToInventory">View Inventory</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="PurchaseManager" asp-action="GoToProducts">Products</a>
+                        </li>
+                    }
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Logout" title="Click here to logout" style="cursor: pointer;">
-                            <span style="display: inline-block;" onmouseover="this.style.color='red';" onmouseout="this.style.color='black';">
-                                Logout
-                                <i class="fa fa-sign-out"></i>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Logout" title="Click here to logout">
+                            <span onmouseover="this.style.color='red';" onmouseout="this.style.color='black';">
+                                Logout <i class="fa fa-sign-out-alt"></i>
                             </span>
                         </a>
                     </li>
-
                 </ul>
             </div>
         </div>
     }
-
-
-    </header>
 
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-   
+
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - WineStore.WebSite - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-
-
-

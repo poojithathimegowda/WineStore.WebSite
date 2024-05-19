@@ -21,23 +21,109 @@ namespace WineStore.WebSite.Controllers
             // Set auth token in request header
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         }
-        // GET: ShopController
+
         public async Task<ActionResult> Index()
         {
             try
             {
-                ApiManager apiManager = new ApiManager(_httpClient);
-                var input1 = new { };
-                var output1 = await apiManager.CallApiAsync<dynamic, List<Inventory>>("/api/Inventory", input1, System.Web.Mvc.HttpVerbs.Get);
-                return View("ListOfInventory", output1);
+
+                InventoryViewModel inventoryViewModel = new InventoryViewModel();
+
+                if (TempData["MyModel"] != null)
+                {
+                    inventoryViewModel = TempData["MyModel"] as InventoryViewModel;
+                }
+
+                if (TempData["MyModel"] == null)
+                {
+
+
+                    ApiManager apiManager = new ApiManager(_httpClient);
+
+                    var input1 = new { };
+                    var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input1, System.Web.Mvc.HttpVerbs.Get);
+
+
+                    inventoryViewModel.ExistingShop = new List<SelectListItem>();
+
+                    foreach (var shopitem in outputShopViewModel)
+                    {
+                        inventoryViewModel.ExistingShop.Add(new SelectListItem() { Text = shopitem.Shop_Name, Value = shopitem.Shop_ID.ToString() });
+                    }
+                    if (inventoryViewModel.SelectedShop == null)
+                    {
+                        inventoryViewModel.SelectedShop = inventoryViewModel.ExistingShop.FirstOrDefault();
+                    }
+
+
+                    var output1 = await apiManager.CallApiAsync<dynamic, List<Inventory>>("/api/Inventory", input1, System.Web.Mvc.HttpVerbs.Get);
+
+                    inventoryViewModel.inventoryList = output1.Where(i => i.Shop_ID == Convert.ToInt16(inventoryViewModel.SelectedShop.Value)).ToList();
+
+
+                }
+
+
+
+                return View("Index", inventoryViewModel);
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
 
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Index(IFormCollection collection)
+        {
+            try
+            {
 
+                InventoryViewModel inventoryViewModel = new InventoryViewModel();
+                var input1 = new { };
+                ApiManager apiManager = new ApiManager(_httpClient);
+
+                if (TempData["MyModel"] != null)
+                {
+                    inventoryViewModel = TempData["MyModel"] as InventoryViewModel;
+                }
+
+                if (TempData["MyModel"] == null)
+                {
+
+                    inventoryViewModel.ExistingShop = new List<SelectListItem>();
+
+                    var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input1, System.Web.Mvc.HttpVerbs.Get);
+
+
+
+                    foreach (var shopitem in outputShopViewModel)
+                    {
+                        inventoryViewModel.ExistingShop.Add(new SelectListItem() { Text = shopitem.Shop_Name, Value = shopitem.Shop_ID.ToString() });
+                    }
+                    if (inventoryViewModel.SelectedShop == null)
+                    {
+                        inventoryViewModel.SelectedShop = inventoryViewModel.ExistingShop.FirstOrDefault();
+                    }
+                }
+
+
+                var shop = collection["SelectedShop"];
+         
+            
+                var output1 = await apiManager.CallApiAsync<dynamic, List<Inventory>>("/api/Inventory", input1, System.Web.Mvc.HttpVerbs.Get);
+
+                inventoryViewModel.inventoryList = output1.Where(i => i.Shop_ID == Convert.ToInt16(shop)).ToList();
+
+                return PartialView("_InventoryPartial", inventoryViewModel);
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+
+        }
         // GET: ShopController/Details/5
         public async Task<ActionResult> Details(int id)
         {
@@ -47,29 +133,37 @@ namespace WineStore.WebSite.Controllers
         // GET: ShopController/Create
         public async Task<ActionResult> Create()
         {
-            ApiManager apiManager = new ApiManager(_httpClient);
-
-            var input1 = new { };
-            var input2 = new { };
-            var outputProductViewModel = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input1, System.Web.Mvc.HttpVerbs.Get);
-            var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input2, System.Web.Mvc.HttpVerbs.Get);
-
-            InventoryViewModel i1 = new InventoryViewModel();
-            i1.ExistingProducts = new List<SelectListItem>();
-            InventoryViewModel i2 = new InventoryViewModel();
-            i2.ExistingShop = new List<SelectListItem>();
-            foreach (var item in outputProductViewModel)
+            try
             {
-                i1.ExistingProducts.Add(new SelectListItem() { Text = item.Product_Name, Value = item.Product_ID.ToString() });
+
+                ApiManager apiManager = new ApiManager(_httpClient);
+
+                var input1 = new { };
+                var input2 = new { };
+                var outputProductViewModel = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input1, System.Web.Mvc.HttpVerbs.Get);
+                var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input2, System.Web.Mvc.HttpVerbs.Get);
+
+                InventoryViewModel i1 = new InventoryViewModel();
+                i1.ExistingProducts = new List<SelectListItem>();
+                InventoryViewModel i2 = new InventoryViewModel();
+                i2.ExistingShop = new List<SelectListItem>();
+                foreach (var item in outputProductViewModel)
+                {
+                    i1.ExistingProducts.Add(new SelectListItem() { Text = item.Product_Name, Value = item.Product_ID.ToString() });
+                }
+                foreach (var shopitem in outputShopViewModel)
+                {
+                    i2.ExistingShop.Add(new SelectListItem() { Text = shopitem.Shop_Name, Value = shopitem.Shop_ID.ToString() });
+                }
+                InventoryViewModel output1 = new InventoryViewModel();
+                output1.ExistingProducts = i1.ExistingProducts;
+                output1.ExistingShop = i2.ExistingShop;
+                return View("AddInventory", output1);
             }
-            foreach (var shopitem in outputShopViewModel)
+            catch (Exception ex)
             {
-                i2.ExistingShop.Add(new SelectListItem() { Text = shopitem.Shop_Name, Value = shopitem.Shop_ID.ToString() });
+                return View();
             }
-            InventoryViewModel output1 = new InventoryViewModel();
-            output1.ExistingProducts = i1.ExistingProducts;
-            output1.ExistingShop = i2.ExistingShop;
-            return View("AddInventory", output1);
         }
 
         // POST: ShopController/Create
@@ -100,7 +194,7 @@ namespace WineStore.WebSite.Controllers
                 return RedirectToAction("Index");
 
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
@@ -109,37 +203,46 @@ namespace WineStore.WebSite.Controllers
         // GET: ShopController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            ApiManager apiManager = new ApiManager(_httpClient);
-
-            // Fetch specific inventory information
-            var input1 = new { Id = id };
-            var output1 = await apiManager.CallApiAsync<dynamic, InventoryViewModel>($"/api/Inventory/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
-
-            // Fetch product and shop information
-            var input2 = new { };
-            var outputProductViewModel = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input2, System.Web.Mvc.HttpVerbs.Get);
-            var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input2, System.Web.Mvc.HttpVerbs.Get);
-
-            // Populate the view model
-            InventoryViewModel viewModel = new InventoryViewModel();
-            viewModel.ExistingProducts = new List<SelectListItem>();
-            viewModel.ExistingShop = new List<SelectListItem>();
-
-            // Add product and shop information to the view model
-            foreach (var item in outputProductViewModel)
+            try
             {
-                viewModel.ExistingProducts.Add(new SelectListItem() { Text = item.Product_Name, Value = item.Product_ID.ToString() });
+
+
+                ApiManager apiManager = new ApiManager(_httpClient);
+
+                // Fetch specific inventory information
+                var input1 = new { Id = id };
+                var output1 = await apiManager.CallApiAsync<dynamic, InventoryViewModel>($"/api/Inventory/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
+
+                // Fetch product and shop information
+                var input2 = new { };
+                var outputProductViewModel = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input2, System.Web.Mvc.HttpVerbs.Get);
+                var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input2, System.Web.Mvc.HttpVerbs.Get);
+
+                // Populate the view model
+                InventoryViewModel viewModel = new InventoryViewModel();
+                viewModel.ExistingProducts = new List<SelectListItem>();
+                viewModel.ExistingShop = new List<SelectListItem>();
+
+                // Add product and shop information to the view model
+                foreach (var item in outputProductViewModel)
+                {
+                    viewModel.ExistingProducts.Add(new SelectListItem() { Text = item.Product_Name, Value = item.Product_ID.ToString() });
+                }
+                foreach (var item in outputShopViewModel)
+                {
+                    viewModel.ExistingShop.Add(new SelectListItem() { Text = item.Shop_Name, Value = item.Shop_ID.ToString() });
+                }
+
+                // Set additional data obtained from specific inventory
+                viewModel.Inventory_ID = output1.Inventory_ID; // Assuming InventoryViewModel has properties to hold this data
+                viewModel.Quantity = output1.Quantity; // Assuming InventoryViewModel has properties to hold this data
+
+                return View("EditInventory", viewModel);
             }
-            foreach (var item in outputShopViewModel)
+            catch (Exception ex)
             {
-                viewModel.ExistingShop.Add(new SelectListItem() { Text = item.Shop_Name, Value = item.Shop_ID.ToString() });
+                return View();
             }
-
-            // Set additional data obtained from specific inventory
-            viewModel.Inventory_ID = output1.Inventory_ID; // Assuming InventoryViewModel has properties to hold this data
-            viewModel.Quantity = output1.Quantity; // Assuming InventoryViewModel has properties to hold this data
-
-            return View("EditInventory", viewModel);
         }
 
         // POST: ShopController/Edit/5
@@ -166,10 +269,10 @@ namespace WineStore.WebSite.Controllers
                 ApiManager apiManager = new ApiManager(_httpClient);
 
                 var output1 = await apiManager.CallApiAsync<dynamic, InventoryViewModel>($"/api/Inventory/{Id}", inventoryViewModel, System.Web.Mvc.HttpVerbs.Put);
-                
+
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
@@ -178,26 +281,34 @@ namespace WineStore.WebSite.Controllers
         // GET: ShopController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            ApiManager apiManager = new ApiManager(_httpClient);
-
-            var input1 = new { Id = id };
-            var output1 = await apiManager.CallApiAsync<dynamic, InventoryViewModel>($"/api/Inventory/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
-            var outputProductViewModel = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input1, System.Web.Mvc.HttpVerbs.Get);
-            var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input1, System.Web.Mvc.HttpVerbs.Get);
-
-            output1.ExistingProducts = new List<SelectListItem>();
-
-            foreach (var item in outputProductViewModel)
+            try
             {
-                output1.ExistingProducts.Add(new SelectListItem() { Text = item.Product_Name, Value = item.Product_ID.ToString() });
-            }
-            output1.ExistingShop = new List<SelectListItem>();
 
-            foreach (var item in outputShopViewModel)
-            {
-                output1.ExistingShop.Add(new SelectListItem() { Text = item.Shop_Name, Value = item.Shop_ID.ToString() });
+                ApiManager apiManager = new ApiManager(_httpClient);
+
+                var input1 = new { Id = id };
+                var output1 = await apiManager.CallApiAsync<dynamic, InventoryViewModel>($"/api/Inventory/{id}", input1, System.Web.Mvc.HttpVerbs.Get);
+                var outputProductViewModel = await apiManager.CallApiAsync<dynamic, List<ProductViewModel>>("/api/Products", input1, System.Web.Mvc.HttpVerbs.Get);
+                var outputShopViewModel = await apiManager.CallApiAsync<dynamic, List<ShopViewModel>>("/api/Shop", input1, System.Web.Mvc.HttpVerbs.Get);
+
+                output1.ExistingProducts = new List<SelectListItem>();
+
+                foreach (var item in outputProductViewModel)
+                {
+                    output1.ExistingProducts.Add(new SelectListItem() { Text = item.Product_Name, Value = item.Product_ID.ToString() });
+                }
+                output1.ExistingShop = new List<SelectListItem>();
+
+                foreach (var item in outputShopViewModel)
+                {
+                    output1.ExistingShop.Add(new SelectListItem() { Text = item.Shop_Name, Value = item.Shop_ID.ToString() });
+                }
+                return View("DeleteInventory", output1);
             }
-            return View("DeleteInventory",output1);
+            catch (Exception ex)
+            {
+                return View();
+            }
         }
 
         // POST: ShopController/Delete/5
@@ -214,7 +325,7 @@ namespace WineStore.WebSite.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
