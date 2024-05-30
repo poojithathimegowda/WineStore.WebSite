@@ -28,7 +28,7 @@ The Wine Shop Management System is a web-based application designed for employee
 ## Login Module (JWT)
 
 1. User enters username and password -> Server will verify the user (Authenticate)
-2. Server will issue a Token with expire -> Client will store the token.
+2. Server will issue a Token with expire date and time -> Client will store the token.
 3. The stored token is sent in the request header every time -> Server checks the token and sends the Response.
 
 ## Technology Stack
