@@ -188,10 +188,6 @@ namespace WineStore.WebSite.Controllers
                 output1.ExistingSuppliers.Add(new SelectListItem() { Text = supplieritem.Supplier_Name, Value = supplieritem.Supplier_ID.ToString() });
             }
 
-
-
-
-           
             return View("DeleteProduct", output1);
         }
 

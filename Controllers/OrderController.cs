@@ -141,10 +141,10 @@ namespace WineStore.WebSite.Controllers
             }
 
             // Set additional data obtained from specific order
-            viewModel.Order_ID = output1.Order_ID; // Assuming OrderViewModel has properties to hold this data
-            viewModel.Quantity = output1.Quantity; // Assuming OrderViewModel has properties to hold this data
-            viewModel.Total_Amount = output1.Total_Amount; // Assuming OrderViewModel has properties to hold this data
-            viewModel.Order_Date = output1.Order_Date; // Assuming OrderViewModel has properties to hold this data
+            viewModel.Order_ID = output1.Order_ID; 
+            viewModel.Quantity = output1.Quantity; 
+            viewModel.Total_Amount = output1.Total_Amount; 
+            viewModel.Order_Date = output1.Order_Date; 
 
             return View("EditOrders", viewModel);
         }

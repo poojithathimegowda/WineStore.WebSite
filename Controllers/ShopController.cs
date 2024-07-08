@@ -126,9 +126,7 @@ namespace WineStore.WebSite.Controllers
             }
             catch
             {
-                // Set success message
-                //TempData["Message"] = "Something went wrong when updating the data.";
-
+           
                 return View();
             }
         }
