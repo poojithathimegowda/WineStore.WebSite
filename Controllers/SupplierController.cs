@@ -74,10 +74,7 @@ namespace WineStore.WebSite.Controllers
                 ApiManager apiManager = new ApiManager(_httpClient);
                 var output1 = await apiManager.CallApiAsync<SupplierViewModel, SupplierViewModel>($"/api/Suppliers", supplierViewModel, System.Web.Mvc.HttpVerbs.Post);
 
-                // Set success message
-                //ViewBag.Message = "Customer details updated successfully.";
-                //TempData["Message"] = "Customer details added successfully.";
-
+                
                 return RedirectToAction("Index");
 
             }
